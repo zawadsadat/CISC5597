@@ -25,7 +25,7 @@ def _add_history(a, b, source_id, msg):
     with history_lock:
         history.setdefault(key, []).append((source_id, msg))
 
-# To retrive the message from list
+# To retrieve the message from list
 def _get_history(a, b):
     key = (a, b) if a < b else (b, a)
     with history_lock:
@@ -43,11 +43,11 @@ def link_handler(link, client_addr, my_id):
                 continue
 
 
-            # list
+            # list (active clients)
             if msg.lower() == "list":
                 with clients_lock:
                     ids = sorted(clients.keys())
-                link.sendall(("ACTIVE:" + ",".join(map(str, ids)) if ids else "ACTIVE:").encode())
+                link.sendall(("ACTIVE CLIENTS ARE:" + ",".join(map(str, ids)) if ids else "ACTIVE CLIENTS ARE:").encode())
                 continue
 
             # exit
@@ -95,13 +95,13 @@ def link_handler(link, client_addr, my_id):
 
                 # deliver to target
                 try:
-                    target_sock.sendall(f"{my_id}: {content}".encode())
+                    target_sock.sendall(f"CLIENT {my_id}: {content}".encode())
                 except Exception:
                     link.sendall(f"ERROR: failed to deliver to {target_id}".encode())
                     continue
 
 
-                link.sendall(f"DELIVERED to {target_id}".encode())
+                link.sendall(f"DELIVERED to CLIENT {target_id}".encode())
                 continue
 
 

@@ -44,6 +44,14 @@ try:
             continue
         s.sendall(inp.encode())
         if inp.lower() == "exit":
+            s.sendall(b"exit")
+            # stop further sends, keep receiving
+            try:
+                s.shutdown(socket.SHUT_WR)
+            except Exception:
+                pass
+            # give receiver thread a moment to print "Goodbye"
+            rt.join(timeout=2)
             break
 except (KeyboardInterrupt, EOFError):
     try:
